@@ -1,6 +1,6 @@
 import { DurableObject } from 'cloudflare:workers';
 import { act, activeSeats, closeClaim, newMatch, startRound, type Action, type GameEvent, type Match } from '../shared/engine';
-import { DEFAULT_RULES } from '../shared/rules';
+import { DEFAULT_RULES, snapshotRules } from '../shared/rules';
 import { shuffle } from '../shared/tiles';
 import {
   buildGameView,
@@ -14,6 +14,8 @@ import {
 export interface Env {
   ROOM: DurableObjectNamespace<Room>;
   ASSETS: Fetcher;
+  /** 仅供自动化测试缩短响应窗口(毫秒)；生产环境不要设置。 */
+  CLAIM_WINDOW_MS?: string;
 }
 
 /** 本局结束后等待下一局的最长时间。 */
@@ -237,7 +239,8 @@ export class Room extends DurableObject<Env> {
         if (d.members.length !== 4 || !d.members.every((m) => m.ready)) return this.send(ws, { t: 'error', code: 'not-ready' });
         shuffle(d.members, cryptoRng);
         const dealer = Math.floor(cryptoRng() * 4);
-        d.match = newMatch(DEFAULT_RULES, dealer);
+        const testMs = Number(this.env.CLAIM_WINDOW_MS);
+        d.match = newMatch(testMs >= 100 && testMs <= 3000 ? snapshotRules({ claimWindowMs: testMs }) : DEFAULT_RULES, dealer);
         d.stage = 'game';
         this.lastViews.clear();
         startRound(d.match, cryptoRng);
