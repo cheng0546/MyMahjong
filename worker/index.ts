@@ -35,7 +35,7 @@ export default {
     if (parts[1] !== 'rooms') return json({ error: 'not-found' }, 404);
 
     if (parts.length === 2 && request.method === 'POST') {
-      if (limited(`create:${ip}`, 10, 60_000)) return json({ error: 'rate-limited' }, 429);
+      if (env.TEST_NO_RATE_LIMIT !== '1' && limited(`create:${ip}`, 10, 60_000)) return json({ error: 'rate-limited' }, 429);
       for (let i = 0; i < 5; i++) {
         const code = newCode();
         const stub = env.ROOM.get(env.ROOM.idFromName(code));
@@ -53,7 +53,7 @@ export default {
     if (!CODE_RE.test(code)) return json({ error: 'not-found' }, 404);
     const action = parts[3] ?? '';
     const isWs = action === 'ws';
-    if (limited(`${isWs ? 'ws' : 'join'}:${ip}`, isWs ? 60 : 30, 60_000)) return json({ error: 'rate-limited' }, 429);
+    if (env.TEST_NO_RATE_LIMIT !== '1' && limited(`${isWs ? 'ws' : 'join'}:${ip}`, isWs ? 60 : 30, 60_000)) return json({ error: 'rate-limited' }, 429);
     if (!['', 'join', 'ws'].includes(action)) return json({ error: 'not-found' }, 404);
     if ((action === 'join' && request.method !== 'POST') || (action === '' && request.method !== 'GET')) {
       return json({ error: 'method' }, 405);

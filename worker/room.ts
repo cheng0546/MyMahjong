@@ -16,6 +16,8 @@ export interface Env {
   ASSETS: Fetcher;
   /** 仅供自动化测试缩短响应窗口(毫秒)；生产环境不要设置。 */
   CLAIM_WINDOW_MS?: string;
+  /** 仅供自动化测试：设为 "1" 时关闭频率限制(同一 IP 连续跑多组测试会触发限流)；生产环境不要设置。 */
+  TEST_NO_RATE_LIMIT?: string;
 }
 
 /** 本局结束后等待下一局的最长时间。 */

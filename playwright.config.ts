@@ -14,6 +14,6 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120_000,
     // 仅测试：把响应窗口缩短到 400ms，让整局能快速打完。
-    env: { CLOUDFLARE_INCLUDE_PROCESS_ENV: 'true', CLAIM_WINDOW_MS: '400' },
+    env: { CLOUDFLARE_INCLUDE_PROCESS_ENV: 'true', CLAIM_WINDOW_MS: '400', TEST_NO_RATE_LIMIT: '1' },
   },
 });
