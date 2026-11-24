@@ -1,12 +1,13 @@
 {
     "name":  "my-mahjong",
     "version":  "1.0.0",
-    "description":  "????????(????)",
+    "description":  "私人四川麻将血战到底(仅限好友联机)",
     "scripts":  {
                     "dev":  "vite",
                     "build":  "vite build",
                     "preview":  "vite preview",
-                    "deploy":  "npm run build \u0026\u0026 wrangler deploy",
+                    "deploy":  "npm run build && wrangler deploy --config dist/my_mahjong/wrangler.json",
+                    "deploy:dry-run":  "npm run build && wrangler deploy --dry-run --config dist/my_mahjong/wrangler.json",
                     "typecheck":  "tsc --noEmit",
                     "test":  "vitest run",
                     "test:e2e":  "playwright test",
@@ -37,6 +38,6 @@
                      },
     "private":  true,
     "engines":  {
-                    "node":  "\u003e=20.19.0"
+                    "node":  ">=20.19.0"
                 }
 }

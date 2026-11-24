@@ -147,7 +147,8 @@ test('四个独立浏览器客户端完成一桌牌局', async ({ browser }) => 
   await expect(reloader.page.getByTestId('table')).toBeVisible();
   const after = await snapshotState(reloader.page);
   expect(after.seat).toBe(before.seat);
-  expect(after.tiles.length).toBeGreaterThanOrEqual(13);
+  // 随机穿插的"碰"偶尔是合法的，手牌可能少于 13 张；只确认私有手牌已恢复
+  await expect.poll(async () => (await snapshotState(reloader.page)).tiles.length).toBeGreaterThanOrEqual(10);
 
   // 9. 打到本局结束(牌墙摸完或三人退出)
   const deadline = Date.now() + 200_000;
